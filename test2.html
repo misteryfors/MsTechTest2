@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthy Living</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            color: white;
+            background-color: black;
+            line-height: 1.6;
+        }
+
+        /* Видео на весь фон */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Основной контент */
+        .content {
+            position: relative;
+            padding: 60px 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.85);
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 300;
+        }
+
+        /* Контейнер для строк текста */
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Строка текста */
+        .text-line {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* Отверстие в тексте */
+        .text-hole {
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin: 0 5px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            vertical-align: middle;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* Видео внутри отверстия */
+        .text-hole video {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            transform: translate(
+                    calc(-1 * var(--hole-x) + 30px),
+                    calc(-1 * var(--hole-y) + 15px)
+            );
+        }
+    </style>
+</head>
+<body>
+<!-- Видео на фоне -->
+<div class="video-background">
+    <video autoplay muted loop id="mainVideo">
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+</div>
+
+<!-- Контент с отверстиями в тексте -->
+<div class="content">
+    <div class="text-container">
+        <div class="text-line">
+            We're here <span class="text-hole" id="hole1"></span> to make healthy
+        </div>
+        <div class="text-line">
+            living effortless, <span class="text-hole" id="hole2"></span> so you can
+        </div>
+        <div class="text-line">
+            focus on being <span class="text-hole" id="hole3"></span> happier
+        </div>
+        <div class="text-line">
+            and healthier <span class="text-hole" id="hole4"></span> every day
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainVideo = document.getElementById('mainVideo');
+        const holes = document.querySelectorAll('.text-hole');
+
+        // Клонируем видео для каждого отверстия
+        holes.forEach(hole => {
+            const videoClone = mainVideo.cloneNode(true);
+            videoClone.muted = true;
+            hole.appendChild(videoClone);
+        });
+
+        // Обновляем позиции видео в отверстиях
+        function updateHolePositions() {
+            const bgRect = document.querySelector('.video-background').getBoundingClientRect();
+
+            holes.forEach(hole => {
+                const rect = hole.getBoundingClientRect();
+                const x = rect.left + rect.width/2 - bgRect.left;
+                const y = rect.top + rect.height/2 - bgRect.top;
+
+                hole.style.setProperty('--hole-x', x + 'px');
+                hole.style.setProperty('--hole-y', y + 'px');
+            });
+        }
+
+        // Инициализация и обработка событий
+        updateHolePositions();
+        window.addEventListener('scroll', updateHolePositions);
+        window.addEventListener('resize', updateHolePositions);
+
+        // Запускаем видео
+        mainVideo.play().catch(e => console.log(e));
+    });
+</script>
+</body>
+</html>
